@@ -1,0 +1,39 @@
+{
+  "name": "amido-monorepo-cli",
+  "version": "1.0.0",
+  "description": "",
+  "source": "src/index.cjs",
+  "main": "dist/main.cjs",
+  "bin": "src/index.cjs",
+  "type": "commonjs",
+  "scripts": {
+    "build": "parcel build",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amido/Amido.Ecommerce.CLI.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amido/Amido.Ecommerce.CLI/issues"
+  },
+  "homepage": "https://github.com/amido/Amido.Ecommerce.CLI#readme",
+  "devDependencies": {
+    "@babel/core": "^7.17.12",
+    "@babel/preset-env": "^7.17.12",
+    "assert": "^2.0.0",
+    "babel-jest": "^28.1.0",
+    "console-browserify": "^1.2.0",
+    "jest": "^28.1.0",
+    "parcel": "^2.5.0",
+    "path-browserify": "^1.0.1",
+    "process": "^0.11.10",
+    "util": "^0.12.4"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "minimist": "^1.2.6"
+  }
+}
