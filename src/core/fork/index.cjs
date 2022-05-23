@@ -3,12 +3,10 @@ const util = require('util')
 const chalk = require('chalk')
 const exec = util.promisify(require('child_process').exec)
 
-const handleError = ({stderr}, command) => {
-  if (stderr) {
-      process.send({status: 'error', message: stderr})
-  }
-}
-
+/**
+ * Executes commands on the child proccess, handelling success and error states.
+ * @param {object} command - The details require to create the script to run on the child process
+ */
 const runChildCommand = async ({command, flags, module}) => {
   try {
     const {stdout} = await exec(`npm run ${command} -w ${module} --if-present ${flags}`)
@@ -19,7 +17,7 @@ const runChildCommand = async ({command, flags, module}) => {
 
     process.send({status: 'success', message: stdout})
   } catch (error) {
-    handleError(error, command)
+    process.send({ status: 'error', message: error.stderr})
   }
 }
 
