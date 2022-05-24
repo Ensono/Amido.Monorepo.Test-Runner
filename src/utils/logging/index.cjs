@@ -10,19 +10,18 @@ const logCommandResults = (results, orderedPackages) => {
   results.forEach(({command, message, module, hasError}) => {
     const logColour = hasError ? error : log
     const status = hasError ? 'failed ❌' : 'successful ✅ '
-    const formattedMessage = `\n${divider}\n${module}: ${command} ${status}\n${divider}\n${message}${divider}\n`
+    const messageHeader = `\n${divider}\n${module}: ${command} ${status}\n${divider}\n`
+    const messageFooter = `${divider}\n`
+    const sanitisedMessage = [chalk.hex(logColour)(messageHeader), message, chalk.hex(logColour)(messageFooter)]
 
     if (hasError) {
-      console.log('has error')
       modulesSucceeded = modulesSucceeded.filter((orderedPackage) => {
-        console.log(orderedPackage.module, module, orderedPackage.module !== module)
         return orderedPackage.module !== module
       })
-      modulesFailed.push(formattedMessage)
-      console.log('succ modules:', modulesSucceeded)
+      modulesFailed.push(...sanitisedMessage)
     }
 
-    console.log(chalk.hex(logColour)(formattedMessage))
+    console.log(...sanitisedMessage)
   })
 
   return {modulesSucceeded, modulesFailed}

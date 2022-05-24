@@ -9,7 +9,7 @@ const exec = util.promisify(require('child_process').exec)
  */
 const runChildCommand = async ({command, flags, module}) => {
   try {
-    const {stdout} = await exec(`npm run ${command} -w ${module} --if-present ${flags}`)
+    const {stdout} = await exec(`npm run ${command} -w ${module} --if-present --color=always ${flags}`)
 
     if (!stdout) {
       process.send({status: 'warning', message: `No output recieved from ${command} ⚠️`})
@@ -17,7 +17,7 @@ const runChildCommand = async ({command, flags, module}) => {
 
     process.send({status: 'success', message: stdout})
   } catch (error) {
-    process.send({ status: 'error', message: error.stderr})
+    process.send({ status: 'error', message:`${error.stdout}${error.stderr}`})
   }
 }
 

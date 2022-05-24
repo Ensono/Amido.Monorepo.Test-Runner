@@ -94,9 +94,8 @@ const getModuleConsumers = async modulePaths => {
   const moduleConsumers = new Set()
 
   for (const path of modulePaths) {
-    console.log(chalk.hex(statusColours.log)(`\nSearching ${name} for package dependencies...`))
-
     const {name} = require(resolve(`./${path}package.json`))
+    console.log(chalk.hex(statusColours.log)(`\nSearching ${name} for package dependencies...`))
     const {stdout} = await exec(`npm list ${name} --json`)
     const {dependencies} = JSON.parse(stdout)
 
@@ -181,19 +180,19 @@ const orderModules = async packagesSet => {
 * @return {array<object>} A list of applications with their output and statuses from the command ran
 **/
 const runCommand = (apps, {command, flags}) => {
-  const runningChildren = []
   const promises = []
 
   for (const {module} of apps) {
     const promise = new Promise((resolve, reject) => {
       const child = fork(`${__dirname}/fork/index.cjs`)
 
-      runningChildren.push({module, child})
+      console.time(chalk.hex(statusColours.success)(`${module} - ${command} complete ✅`));
       child.send({message: 'start', command, flags, module})
 
       child.on('message', ({status, message}) => {
         if (status === 'error' || status === 'success') {
           child.kill()
+          console.timeEnd(chalk.hex(statusColours.success)(`${module} - ${command} complete ✅`));
           resolve({command, message, module, hasError: status === 'error'})
         } else if (status) {
           // TODO: Do we need this?

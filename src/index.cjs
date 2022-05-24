@@ -38,7 +38,7 @@ const runCLI = async () => {
 
     if (modulesWithFailedScript.length) {
       console.error(chalk.hex(statusColours.error)('Errors occured while executing the following commands:'))
-      modulesWithFailedScript.forEach(failedScript => console.error(chalk.hex(statusColours.error)(failedScript)))
+      modulesWithFailedScript.forEach(failureMessages => console.error(...failureMessages))
     } else {
       console.log(chalk.hex(statusColours.success)('All commands completed successfully ✅'))
     }
