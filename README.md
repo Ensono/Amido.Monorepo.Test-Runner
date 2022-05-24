@@ -1,4 +1,4 @@
-# Amido.Monorepo.Package-Consumers-Test-Runner
+# Amido.Monorepo.Test-Runner
 
 **WIP do not use as it is in current development**
 
