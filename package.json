@@ -1,11 +1,21 @@
 {
-  "name": "amido-monorepo-cli",
+  "name": "package-consumer-test-runner",
   "version": "1.0.0",
   "description": "",
-  "source": "src/index.cjs",
   "main": "dist/main.cjs",
-  "bin": "src/index.cjs",
+  "bin": "dist/main.cjs",
   "type": "commonjs",
+  "engines": {
+    "node": ">=16"
+  },
+  "targets": {
+    "main": {
+      "source": "src/index.cjs"
+    },
+    "fork": {
+      "source": "src/core/fork/index.cjs"
+    }
+  },
   "scripts": {
     "build": "parcel build",
     "test": "jest"

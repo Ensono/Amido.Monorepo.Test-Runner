@@ -108,7 +108,7 @@ const mockEmptyConsumers = `
   }
   `
 
-const mockRootPackageJson = `
+const mockRootPackageJson = 
   {
     "name": "@batman/monorepo",
     "version": "1.0.0",
@@ -158,7 +158,7 @@ const mockRootPackageJson = `
     "devDependencies": {
       "@types/compression": "^1.7.2"
     }
-  }`
+  }
 
 const mockAllConsumerPackages = `
 {

@@ -19,7 +19,7 @@ const {
   mockRootPackageJson,
   mockAllConsumerPackages,
 } = require('./index.mock.cjs')
-const statusColours = require('./theme/index.cjs')
+const statusColours = require('../utils/theme/index.cjs')
 
 jest.mock('child_process')
 jest.mock('fs/promises')
@@ -27,10 +27,9 @@ jest.mock('path')
 
 describe('Utils', () => {
   const log = jest.spyOn(console, 'log').mockImplementation(() => {})
+  const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
   const error = jest.spyOn(console, 'error').mockImplementation(() => {})
   describe('getFilesChanged', () => {
-    const exit = jest.spyOn(process, 'exit').mockImplementation(() => {})
-
     afterEach(() => {
       jest.resetModules()
       jest.clearAllMocks()
@@ -53,9 +52,9 @@ describe('Utils', () => {
       exec.mockImplementation((command, callback) => callback(null, {stdout: mockDiff}))
 
       const filesChanged = await getFilesChanged()
-      expect(filesChanged).toEqual([])
+      expect(filesChanged).toEqual(undefined)
       expect(log).toHaveBeenCalled()
-      expect(exit).toBeCalledWith(0)
+      expect(process.exitCode).toStrictEqual(0)
     })
 
     it('should exit if there is an error when running the command', async () => {
@@ -63,9 +62,9 @@ describe('Utils', () => {
       exec.mockImplementation((command, callback) => callback(null, {stderr: mockGitCliError, stdout: ''}))
 
       const filesChanged = await getFilesChanged()
-      expect(filesChanged).toEqual([])
+      expect(filesChanged).toEqual(undefined)
       expect(error).toHaveBeenCalledWith(chalk.hex(statusColours.error)(mockGitCliError))
-      expect(exit).toBeCalledWith(0)
+      expect(process.exitCode).toEqual(1)
     })
   })
 
@@ -166,15 +165,12 @@ describe('Utils', () => {
       )
     })
 
-    it('should exit if there are no consumers of the package', async () => {
+    it('should log a warning if there are no consumers of the package', async () => {
       resolve.mockReturnValueOnce('/Users/jeff/Documents/repos/test/libs/framework/federate-component/package.json')
       exec.mockImplementationOnce((command, callback) => callback(null, {stdout: mockEmptyConsumers}))
-      const exit = jest.spyOn(process, 'exit').mockImplementation(() => undefined)
 
       await getModuleConsumers(['libs/framework/federate-component/src/index.tsx'])
-
-      expect(log).toHaveBeenNthCalledWith(2, chalk.hex(statusColours.warning)('No consumers for the package'))
-      expect(exit).toBeCalledWith(0)
+      expect(warn).toHaveBeenCalledWith(chalk.hex(statusColours.warning)('No consumers for the @batman/federate-component module'))
     })
   })
 
@@ -191,7 +187,7 @@ describe('Utils', () => {
         '@batman/header',
       ])
 
-      jest.mock('../../../../package.json', () => mockRootPackageJson, {
+      jest.mock(`${process.cwd()}/package.json`, () => mockRootPackageJson, {
         virtual: true,
       })
 
@@ -220,11 +216,11 @@ describe('Utils', () => {
       expect(orderedPackages).toStrictEqual([
         {
           absolutePath: '/Users/jeff/Documents/repos/test/libs/framework/federate-component',
-          package: '@batman/federate-component',
+          module: '@batman/federate-component',
         },
-        {absolutePath: '/Users/jeff/Documents/repos/test/apps/AppShell', package: '@batman/app-shell'},
-        {absolutePath: '/Users/jeff/Documents/repos/test/apps/MFE/Header', package: '@batman/header'},
-        {absolutePath: '/Users/jeff/Documents/repos/test/apps/MFE/Footer', package: '@batman/footer'},
+        {absolutePath: '/Users/jeff/Documents/repos/test/apps/AppShell', module: '@batman/app-shell'},
+        {absolutePath: '/Users/jeff/Documents/repos/test/apps/MFE/Header', module: '@batman/header'},
+        {absolutePath: '/Users/jeff/Documents/repos/test/apps/MFE/Footer', module: '@batman/footer'},
       ])
     })
   })

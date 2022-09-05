@@ -19,18 +19,16 @@ const getFilesChanged = async () => {
   if (stderr) {
     console.error(chalk.hex(statusColours.error)(stderr))
     process.exitCode = 1
-  }
-
-  if (!stdout) {
+  } else if (!stdout) {
     console.log(chalk.hex(statusColours.warning)('No changes recorded to any framework'))
     process.exitCode = 0
+  } else {
+    console.log(chalk.hex(statusColours.success)(`Files changed resolved successfully ✅ `))
+
+    // Removes last entry as is empty space
+    const filesChanged = stdout.split('\n').slice(0, -1)
+    return filesChanged
   }
-
-  console.log(chalk.hex(statusColours.success)(`Files changed resolved successfully ✅ `))
-
-  // Removes last entry as is empty space
-  const filesChanged = stdout.split('\n').slice(0, -1)
-  return filesChanged
 }
 
 /**
@@ -105,7 +103,11 @@ const getModuleConsumers = async modulePaths => {
       const dependenciesArr = Object.keys(dependencies)
       console.log(chalk.hex(statusColours.success)(`Package dependencies found ✅`))
 
-      dependenciesArr.forEach(dep => moduleConsumers.add(dep))
+      dependenciesArr.forEach(dep => {
+        if(argv['only-consumers'] && dep !== name || !argv['only-consumers']){
+          moduleConsumers.add(dep)
+        }
+      })
     }
   }
   return moduleConsumers
@@ -169,6 +171,7 @@ const orderModules = async packagesSet => {
     return resolve(workspace)
   })
   const packagesWithPaths = await getAbsolutePackagePaths([...packagesSet])
+  
   packagesWithPaths.sort(compareByPath(absoluteWorkspacePaths))
   return packagesWithPaths
 }
