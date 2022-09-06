@@ -193,17 +193,18 @@ const runCommand = (apps, {command, flags}) => {
       child.send({message: 'start', command, flags, module})
 
       child.on('message', ({status, message}) => {
-        if (status === 'error' || status === 'success') {
+        if (status === 'success') {
           child.kill()
           console.timeEnd(chalk.hex(statusColours.success)(`${module} - ${command} complete ✅`));
           resolve({command, message, module, hasError: status === 'error'})
-        } else if (status) {
-          // TODO: Do we need this?
-          console.log(chalk.hex(statusColours[status])(`\n${module}: `, message))
+        } else if (status === 'error') {
+          child.kill()
+          reject(new Error(`${module} error: ${message}`))
         }
       })
 
       child.on(`error`, ({message}) => {
+        child.kill()
         reject(new Error(`${module} error: ${message}`))
       })
     })
