@@ -1,6 +1,6 @@
 {
   "name": "package-consumer-test-runner",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Monorepo CLI tool used to run a set of commands on the consumers of a specific package",
   "main": "dist/main.cjs",
   "bin": "dist/main.cjs",
